@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.principal.services.rest.business.daos.timbre.ITipoDocumentoDAO">
+
+  <resultMap id="tipoDocumento" type="com.principal.services.rest.common.dto.timbre.TipoDocumentoDTO">
+    <id column="cldy_id_tipo_documento" property="id"/>
+    <result column="cldy_codigo" property="codigo"/>
+    <result column="cldy_descripcion" property="descripcion"/>
+  </resultMap>
+
+  <sql id="tiposDocumentosSQL">
+    SELECT cldy_id_tipo_documento,
+           cldy_codigo,
+           cldy_descripcion
+    FROM cl_timbre_tipo_documento
+  </sql>
+
+  <select id="getTipoDocumentos" resultMap="tipoDocumento">
+    <include refid="tiposDocumentosSQL"/>
+  </select>
+
+  <select id="getTipoDocumento" resultMap="tipoDocumento" parameterType="map">
+    <include refid="tiposDocumentosSQL"/>
+    WHERE
+      cldy_id_tipo_documento = #{id}
+  </select>
+
+  <insert id="saveTipoDocumento" parameterType="com.principal.services.rest.common.dto.timbre.TipoDocumentoDTO"
+          useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO cl_timbre_tipo_documento(
+      cldy_codigo,
+      cldy_descripcion
+    ) VALUES (
+      #{codigo},
+      #{descripcion}
+    )
+  </insert>
+
+  <update id="updateTipoDocumento" parameterType="com.principal.services.rest.common.dto.timbre.TipoDocumentoDTO">
+    UPDATE cl_timbre_tipo_documento
+    SET
+      cldy_codigo = #{codigo} ,
+      cldy_descripcion= #{descripcion}
+    WHERE
+      cldy_id_tipo_documento = #{id}
+  </update>
+
+  <delete id="deleteTipoDocumento" parameterType="map">
+    DELETE FROM cl_timbre_tipo_documento
+    WHERE
+      cldy_id_tipo_documento = #{id}
+  </delete>
+
+
+</mapper>

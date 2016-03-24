@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.principal.services.rest.business.daos.perfInv.IPerfilBduDAO">
+
+  <resultMap id="perfil" type="com.principal.services.rest.common.dto.perfil.inversionista.ClasificacionDTO">
+    <id column="cldy_perfilinversionista" property="id"/>
+    <result column="cldy_nombre" property="nombre"/>
+  </resultMap>
+
+  <select id="clientExists" parameterType="map" resultType="Boolean">
+    select COUNT(c.cldy_rut)
+    from cl_cliente c
+    WHERE c.cldy_rut = #{rut}
+  </select>
+
+  <select id="getPerfilById" parameterType="map" resultMap="perfil">
+    select cldy_perfilinversionista,cldy_nombre
+    from cl_perfil_inversionista_bdu
+    WHERE cldy_perfilinversionista = #{id}
+  </select>
+
+  <select id="getPerfilByRut" parameterType="map" resultMap="perfil">
+    select p.cldy_perfilinversionista,p.cldy_nombre
+    from cl_perfil_inversionista_bdu p
+    inner join cl_cliente c ON c.cldy_idPerfilinversionista = p.cldy_perfilinversionista
+    WHERE c.cldy_rut = #{rut}
+  </select>
+
+  <update id="updatePerfilIdByRut" parameterType="map">
+    UPDATE cl_cliente
+    SET cldy_idPerfilinversionista = #{id}
+    where cldy_rut = #{rut}
+  </update>
+
+</mapper>
+

@@ -1,0 +1,16 @@
+target/
+.idea/
+build/
+.gradle/
+out/
+
+*.iml
+*.ipr
+*.iws
+
+*.ear
+*.war
+
+.~lock*
+*.log.*
+

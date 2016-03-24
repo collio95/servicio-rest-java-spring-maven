@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <bean id="sqlSessionFactoryPfgPerfInv" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <property name="dataSource" ref="datasourcePfgPerfInv"/>
+    <property name="configurationProperties">
+      <props>
+        <prop key="multipleResultSetsEnabled">true</prop>
+      </props>
+    </property>
+    <property name="mapperLocations" value="classpath*:mappers/**/*.xml"/>
+  </bean>
+
+  <bean id="sqlSessionTemplatePfgPerfInv" class="org.mybatis.spring.SqlSessionTemplate">
+    <constructor-arg index="0" ref="sqlSessionFactoryPfgPerfInv"/>
+  </bean>
+
+  <bean id="genericMapperPfgPerfInv" class="org.mybatis.spring.mapper.MapperFactoryBean" abstract="true">
+    <property name="sqlSessionTemplate" ref="sqlSessionTemplatePfgPerfInv"/>
+    <property name="addToConfig" value="true"/>
+  </bean>
+
+  <bean id="preguntaDAO" parent="genericMapperPfgPerfInv">
+    <property name="mapperInterface" value="com.principal.services.rest.business.daos.perfInv.IPreguntaDAO"/>
+  </bean>
+
+  <bean id="respuestaDAO" parent="genericMapperPfgPerfInv">
+    <property name="mapperInterface" value="com.principal.services.rest.business.daos.perfInv.IRespuestaDAO"/>
+  </bean>
+
+</beans>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.principal.services.rest.business.daos.perfInv.IRespuestaDAO">
+
+  <resultMap id="respuesta" type="com.principal.services.rest.common.dto.perfil.inversionista.RespuestaDTO">
+    <id column="pidy_id_respuesta" property="id"/>
+    <result column="pidy_num_posicion" property="posicion"/>
+    <result column="pidy_desc_respuesta" property="decripcion"/>
+    <result column="seleccionada" property="seleccionada"/>
+  </resultMap>
+
+  <select id="getHistoricoRespuesta" parameterType="map" resultType="Long">
+    SELECT phr.pidy_id_respuesta
+    FROM pi_historico_respuestas phr
+    INNER JOIN pi_historico_formulario phf ON phf.pidy_id_historico_formulario = phr.pidy_id_historico_formulario
+    where phf.pidy_rut_usuario = #{rut} and phf.pidy_fecha_respuesta = (
+      SELECT MAX(pidy_fecha_respuesta) FROM pi_historico_formulario WHERE pidy_rut_usuario = #{rut}
+    )
+  </select>
+
+
+  <select id="getRespuestasByPregunta" parameterType="map" resultMap="respuesta">
+    SELECT
+      pr.pidy_id_respuesta,
+      pr.pidy_id_pregunta,
+      pr.pidy_num_posicion,
+      pr.pidy_desc_respuesta,
+      pr.pidy_num_puntaje,
+      (
+        SELECT COUNT(phr.pidy_id_respuesta)
+        FROM pi_historico_respuestas phr
+          INNER JOIN pi_historico_formulario phf ON phf.pidy_id_historico_formulario = phr.pidy_id_historico_formulario
+        where phf.pidy_rut_usuario = #{rut} and phf.pidy_fecha_respuesta = (
+          SELECT MAX(pidy_fecha_respuesta) FROM pi_historico_formulario WHERE pidy_rut_usuario = #{rut}
+        ) and pidy_id_respuesta = pr.pidy_id_respuesta
+      ) as seleccionada
+    FROM pi_respuestas pr
+    WHERE (pidy_id_pregunta= #{preguntaId} and pidy_num_estado = 1)
+  </select>
+
+
+  <select id="getPuntajeFinal" parameterType="map" resultType="Long">
+    SELECT SUM(pidy_num_puntaje) as puntaje FROM pi_respuestas
+    WHERE pidy_num_estado = 1
+    and pidy_id_respuesta IN
+    <foreach collection="respuestas" item="respuesta" separator="," open="(" close=")">
+      #{respuesta}
+    </foreach>
+  </select>
+
+  <select id="getPerfilId" parameterType="map" resultType="Long">
+   select pidy_id_perfiles_aux from pi_perfiles_aux
+   where #{puntaje} between pidy_num_ptjemin and pidy_num_ptjemax
+   and pidy_num_estado = 1
+  </select>
+
+  <insert id="saveHistoricoFormulario" parameterType="map" useGeneratedKeys="true" keyProperty="formularioHistoricoId">
+    INSERT INTO pi_historico_formulario(
+    pidy_rut_usuario,
+    pidy_id_perfil,
+    pidy_desc_glosa,
+    pidy_fecha_respuesta
+    )
+    VALUES (#{rut},#{perfilId},'',GETDATE())
+  </insert>
+
+  <insert id="saveHistoricoRespuesta" parameterType="map">
+    INSERT INTO pi_historico_respuestas (
+       pidy_id_historico_formulario,
+       pidy_id_respuesta
+    )
+    VALUES (#{formularioHistoricoId},#{respuestaId})
+  </insert>
+
+</mapper>
+

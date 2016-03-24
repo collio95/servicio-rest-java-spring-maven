@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <property name="dataSource" ref="datasource"/>
+    <property name="configurationProperties">
+      <props>
+        <prop key="multipleResultSetsEnabled">true</prop>
+      </props>
+    </property>
+    <property name="mapperLocations" value="classpath*:mappers/**/*.xml"/>
+  </bean>
+
+  <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+    <constructor-arg index="0" ref="sqlSessionFactory"/>
+  </bean>
+
+  <bean id="genericMapper" class="org.mybatis.spring.mapper.MapperFactoryBean" abstract="true">
+    <property name="sqlSessionTemplate" ref="sqlSessionTemplate"/>
+    <property name="addToConfig" value="true"/>
+  </bean>
+
+  <bean id="timbreDAO" parent="genericMapper">
+    <property name="mapperInterface" value="com.principal.services.rest.business.daos.timbre.ITimbreDAO"/>
+  </bean>
+
+  <bean id="imagenDAO" parent="genericMapper">
+    <property name="mapperInterface" value="com.principal.services.rest.business.daos.timbre.IImagenDAO"/>
+  </bean>
+
+  <bean id="tipoDocumentoDAO" parent="genericMapper">
+    <property name="mapperInterface" value="com.principal.services.rest.business.daos.timbre.ITipoDocumentoDAO"/>
+  </bean>
+
+  <bean id="perfilBduDAO" parent="genericMapper">
+    <property name="mapperInterface" value="com.principal.services.rest.business.daos.perfInv.IPerfilBduDAO"/>
+  </bean>
+
+  <bean id="clienteDAO" parent="genericMapper">
+    <property name="mapperInterface" value="com.principal.services.rest.business.daos.perfInv.IClienteDAO"/>
+  </bean>
+
+</beans>

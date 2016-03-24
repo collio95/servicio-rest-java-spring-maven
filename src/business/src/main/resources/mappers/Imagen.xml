@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.principal.services.rest.business.daos.timbre.IImagenDAO">
+
+  <resultMap id="imagen" type="com.principal.services.rest.common.dto.timbre.ImagenDTO">
+    <id column="cldy_id_imagen" property="id"/>
+    <result column="cldy_titulo" property="titulo"/>
+    <result column="cldy_imagen_base64" property="base64"/>
+    <result column="cldy_imagen_ancho" property="ancho"/>
+    <result column="cldy_imagen_alto" property="alto"/>
+  </resultMap>
+
+  <sql id="imagenSQL">
+    SELECT cldy_id_imagen,
+           cldy_titulo,
+           cldy_imagen_base64,
+           cldy_imagen_ancho,
+           cldy_imagen_alto
+    FROM cl_timbre_imagen
+  </sql>
+
+  <select id="getImagenes" resultMap="imagen">
+    <include refid="imagenSQL"/>
+  </select>
+
+  <select id="getImagen" resultMap="imagen" parameterType="map">
+    <include refid="imagenSQL"/>
+    WHERE
+      cldy_id_imagen = #{id}
+  </select>
+
+  <insert id="saveImagen" parameterType="com.principal.services.rest.common.dto.timbre.ImagenDTO">
+    INSERT INTO cl_timbre_imagen(
+         cldy_titulo,
+         cldy_imagen_base64,
+         cldy_imagen_ancho,
+         cldy_imagen_alto
+    ) VALUES(
+        #{titulo},
+        #{base64},
+        #{ancho},
+        #{alto}
+    )
+  </insert>
+
+  <update id="updateImagen" parameterType="com.principal.services.rest.common.dto.timbre.ImagenDTO">
+    UPDATE cl_timbre_imagen
+    SET
+      cldy_titulo = #{titulo},
+      cldy_imagen_base64 = #{base64},
+      cldy_imagen_ancho =#{ancho},
+      cldy_imagen_alto = #{alto}
+    WHERE
+      cldy_id_imagen = #{id}
+  </update>
+
+  <delete id="deleteImagen" parameterType="map">
+    DELETE FROM cl_timbre_imagen
+    WHERE
+      cldy_id_imagen = #{id}
+  </delete>
+
+
+</mapper>

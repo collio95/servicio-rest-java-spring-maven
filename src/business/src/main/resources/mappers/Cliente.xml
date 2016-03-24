@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.principal.services.rest.business.daos.perfInv.IClienteDAO">
+
+  <resultMap id="cliente" type="com.principal.services.rest.common.dto.perfil.inversionista.ClienteDTO">
+    <id column="cldy_idcliente" property="id"/>
+    <id column="cldy_nombre" property="nombreCliente"/>
+    <id column="cldy_appaterno" property="appaternoCliente"/>
+    <id column="cldy_apmaterno" property="appaternoCliente"/>
+  </resultMap>
+
+  <select id="getClienteByRut" parameterType="map" resultMap="cliente">
+    SELECT cldy_idcliente,cldy_nombre, cldy_appaterno, cldy_apmaterno
+    FROM cl_cliente
+    where cldy_rut = #{rut}
+  </select>
+</mapper>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.principal.services.rest.business.daos.timbre.ITimbreDAO">
+
+  <resultMap id="timbre" type="com.principal.services.rest.common.dto.timbre.TimbreDTO">
+    <id column="cldy_id_timbre_coordenada" property="id"/>
+    <result column="cldy_coordenada_x" property="x"/>
+    <result column="cldy_coordenada_y" property="y"/>
+    <association property="imagen" column="cldy_id_imagen"
+                 select="com.principal.services.rest.business.daos.timbre.IImagenDAO.getImagen"/>
+    <association property="tipoDocumento" column="cldy_id_tipo_documento"
+                 select="com.principal.services.rest.business.daos.timbre.ITipoDocumentoDAO.getTipoDocumento"/>
+  </resultMap>
+
+  <sql id="coordenadasSQl">
+     SELECT
+        coordenada.cldy_id_timbre_coordenada,
+        coordenada.cldy_coordenada_x,
+        coordenada.cldy_coordenada_y,
+        coordenada.cldy_id_imagen,
+        coordenada.cldy_id_tipo_documento
+      from cl_timbre_coordenadas coordenada
+      inner join cl_timbre_imagen i ON i.cldy_id_imagen = coordenada.cldy_id_imagen
+      inner join cl_timbre_tipo_documento tipo ON tipo.cldy_id_tipo_documento = coordenada.cldy_id_tipo_documento
+  </sql>
+
+
+  <select id="getTimbreByCodigo" resultMap="timbre" parameterType="String">
+    <include refid="coordenadasSQl"/>
+    WHERE
+      tipo.cldy_codigo = #{value}
+  </select>
+
+  <select id="getTimbres" resultMap="timbre">
+    <include refid="coordenadasSQl"/>
+  </select>
+
+  <select id="getTimbre" resultMap="timbre" parameterType="map">
+    <include refid="coordenadasSQl"/>
+    WHERE
+      coordenada.cldy_id_timbre_coordenada = #{id}
+  </select>
+
+  <insert id="saveTimbre" parameterType="com.principal.services.rest.common.dto.timbre.TimbreDTO">
+    INSERT INTO cl_timbre_coordenadas(
+      cldy_id_tipo_documento,
+      cldy_id_imagen,
+      cldy_coordenada_x,
+      cldy_coordenada_y
+    ) VALUES (
+      #{tipoDocumento.id},
+      #{imagen.id},
+      #{x},
+      #{y}
+    )
+  </insert>
+
+  <update id="updateTimbre" parameterType="com.principal.services.rest.common.dto.timbre.TimbreDTO">
+    UPDATE cl_timbre_coordenadas
+    SET
+      cldy_id_tipo_documento = #{tipoDocumento.id} ,
+      cldy_id_imagen = #{imagen.id} ,
+      cldy_coordenada_x = #{x},
+      cldy_coordenada_y = #{y}
+    WHERE
+      cldy_id_timbre_coordenada = #{id}
+  </update>
+
+  <delete id="deleteTimbre" parameterType="map">
+    DELETE FROM cl_timbre_coordenadas
+    WHERE
+      cldy_id_timbre_coordenada = #{id}
+  </delete>
+
+
+</mapper>

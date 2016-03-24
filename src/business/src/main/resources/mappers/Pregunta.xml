@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.principal.services.rest.business.daos.perfInv.IPreguntaDAO">
+
+  <resultMap id="pregunta" type="com.principal.services.rest.common.dto.perfil.inversionista.PreguntaDTO">
+    <id column="pidy_id_preguntas" property="id"/>
+    <result column="pidy_num_posicion" property="posicion"/>
+    <result column="pidy_desc_pregunta" property="descripcion"/>
+    <collection column="{preguntaId=pidy_id_preguntas,rut=rut}" property="respuestas"
+                select="com.principal.services.rest.business.daos.perfInv.IRespuestaDAO.getRespuestasByPregunta"/>
+  </resultMap>
+
+  <select id="getPreguntas" resultMap="pregunta" parameterType="map">
+     SELECT
+       pidy_id_preguntas,
+       pidy_id_seccion,
+       pidy_num_posicion,
+       pidy_desc_pregunta,
+       pidy_desc_imagen,
+       #{rut} as rut
+     FROM pi_preguntas
+     WHERE pidy_num_estado = 1
+     order by pidy_id_seccion,pidy_num_posicion asc
+  </select>
+
+</mapper>
